@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:developer';
+import 'dart:async';
 
 void main() {
   runApp(MyApp());
@@ -52,18 +53,233 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   static String display = 'Press Start';
 
-  static TextEditingController _testwidget_controller;
+  static TextEditingController _textSection_controller;
+
+  static double showTime = 0.1;
+  static int showCount = 10;
+  static int digits = 3;
+
+  static List<int> preDisplay = [];
+
+  void initState() {
+    super.initState();
+    _textSection_controller = new TextEditingController(text: display);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
+    Future<void> Exam_Start(double showTime,int showCount,int digits) async {
+
+      preDisplay = [];
+      int showTime_int = (showTime * 1000).toInt();
+      var random = new math.Random();
+      for(int i=0;i<showCount;i++){
+        var num = random.nextInt(math.pow(10,digits) - math.pow(10,digits-1) + 1);
+        num = num + math.pow(10,digits-1) - 1;
+        // log(showTime_int.toString());
+        preDisplay.add(num);
+      }
+
+      for(int i=0;i<showCount;i++){
+        _textSection_controller.text = preDisplay[i].toString();
+        await Future.delayed(Duration(milliseconds: showTime_int));
+      }
+      _textSection_controller.text = '';
+      log(preDisplay.toString());
+
+    }
+
+    Future<void> Exam_Retry(double showTime,int showCount,int digits) async {
+
+      int showTime_int = (showTime * 1000).toInt();
+
+      for(int i=0;i<preDisplay.length;i++){
+        _textSection_controller.text = preDisplay[i].toString();
+        await Future.delayed(Duration(milliseconds: showTime_int));
+      }
+      _textSection_controller.text = '';
+      log(preDisplay.toString());
+
+    }
+
+
+    Widget textSection = Container(
+        padding: const EdgeInsets.all(32),
+        child: TextField(
+          obscureText: false,
+          controller: _textSection_controller,
+          readOnly: true,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: '',
+          ),
+
+        )
+    );
+
+
+
+    final controlSection = Container(
+      padding: EdgeInsets.all(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FlatButton(
+                onPressed: () {
+                  Exam_Retry(showTime, showCount, digits);
+                },
+                child: Text(
+                  "RETRY",
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Exam_Start(showTime, showCount, digits);
+                },
+                child: Text(
+                  "START",
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+
+    final inputSection = Container(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FlatButton(
+                onPressed: () {
+                  /*...*/
+                },
+                child: Text(
+                  "7",
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+
+                },
+                child: Text(
+                  "8",
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+
+                },
+                child: Text(
+                  "9",
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FlatButton(
+                onPressed: () {
+                  /*...*/
+                },
+                child: Text(
+                  "4",
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+
+                },
+                child: Text(
+                  "5",
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+
+                },
+                child: Text(
+                  "6",
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FlatButton(
+                onPressed: () {
+                  /*...*/
+                },
+                child: Text(
+                  "1",
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+
+                },
+                child: Text(
+                  "2",
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+
+                },
+                child: Text(
+                  "3",
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FlatButton(
+                onPressed: () {
+                  /*...*/
+                },
+                child: Text(
+                  "0",
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+
+                },
+                child: Text(
+                  "AC",
+                ),
+              ),
+              FlatButton(
+                onPressed: () {
+
+                },
+                child: Text(
+                  "ANS",
+                ),
+              ),
+            ],
+          )
+
+        ],
+      ),
+    );
+
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -73,71 +289,16 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: [
           textSection,
-          ratings,
-          testwidget,
+          controlSection,
+          inputSection,
         ],
       ),
     );
   }
 
-  Widget testwidget = Container(
-    padding: const EdgeInsets.all(32),
-    child: TextField(
-      obscureText: true,
-      controller: _testwidget_controller,
-      readOnly: true,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: 'Password',
-      ),
-
-    )
-  );
-
-  void initState() {
-    super.initState();
-    _testwidget_controller = new TextEditingController(text:display);
-  }
-
-  Widget textSection = Container(
-    padding: const EdgeInsets.all(32),
-    child: Text(
-      '$display',
-      softWrap: true,
-    ),
-  );
-
-
-  final ratings = Container(
-    padding: EdgeInsets.all(20),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FlatButton(
-              onPressed: () {
-                /*...*/
-              },
-              child: Text(
-                "retry",
-              ),
-            ),
-            FlatButton(
-              onPressed: () {
-                /*...*/
-                var random = new math.Random();
-                display = random.nextInt(10).toString();
-                log(display);
-              },
-              child: Text(
-                "start",
-              ),
-            ),
-          ],
-        )
-      ],
-    ),
-  );
 }
+
+
+
+
+
