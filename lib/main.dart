@@ -57,10 +57,13 @@ class _MyHomePageState extends State<MyHomePage> {
   static String display = 'Press Start';
 
   static TextEditingController _textSection_controller;
+  static bool TextEditing = true;
 
-  static double showTime = 0.1;
-  static int showCount = 10;
+  static double showTime = 1.0;
+  static int showCount = 4;
   static int digits = 3;
+
+  static int input_answer_num = 0;
 
   static List<int> preDisplay = [];
 
@@ -74,6 +77,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     Future<void> Exam_Start(double showTime,int showCount,int digits) async {
 
+      if(TextEditing == false){
+        return;
+      }
+
+      TextEditing = false;
+      input_answer_num = 0;
+
       preDisplay = [];
       int showTime_int = (showTime * 1000).toInt();
       var random = new math.Random();
@@ -84,28 +94,78 @@ class _MyHomePageState extends State<MyHomePage> {
         preDisplay.add(num);
       }
 
+      _textSection_controller.text = '';
+      await Future.delayed(Duration(milliseconds: showTime_int));
+
       for(int i=0;i<showCount;i++){
         _textSection_controller.text = preDisplay[i].toString();
         await Future.delayed(Duration(milliseconds: showTime_int));
       }
       _textSection_controller.text = '';
-      log(preDisplay.toString());
+      // log(preDisplay.toString());
+
+      TextEditing = true;
 
     }
 
     Future<void> Exam_Retry(double showTime,int showCount,int digits) async {
 
+      if(TextEditing == false){
+        return;
+      }
+
+      TextEditing = false;
+      input_answer_num = 0;
+
       int showTime_int = (showTime * 1000).toInt();
+
+      _textSection_controller.text = '';
+      await Future.delayed(Duration(milliseconds: showTime_int));
 
       for(int i=0;i<preDisplay.length;i++){
         _textSection_controller.text = preDisplay[i].toString();
         await Future.delayed(Duration(milliseconds: showTime_int));
       }
       _textSection_controller.text = '';
-      log(preDisplay.toString());
+      // log(preDisplay.toString());
+
+      TextEditing = true;
 
     }
 
+    void input_answer(int input){
+
+      if(TextEditing == false){
+        return;
+      }
+
+      if(0 <= input && input <= 9){
+
+        input_answer_num = input_answer_num * 10;
+        input_answer_num = input_answer_num + input;
+        _textSection_controller.text = input_answer_num.toString();
+        // log(input_answer_num.toString());
+
+      }else if(input == -1){
+
+        input_answer_num = 0;
+        _textSection_controller.text = '';
+
+      }
+    }
+
+    bool correctness_decision(){
+      int correct_num = preDisplay.reduce((a, b) => a + b);
+
+      log('input=${correct_num.toString()},correct=${input_answer_num.toString()}');
+      if(correct_num == input_answer_num){
+        _textSection_controller.text = '〇';
+        return true;
+      }else{
+        _textSection_controller.text = '×';
+        return false;
+      }
+    }
 
     Widget textSection = Container(
         padding: const EdgeInsets.all(32),
@@ -117,11 +177,8 @@ class _MyHomePageState extends State<MyHomePage> {
             border: OutlineInputBorder(),
             labelText: '',
           ),
-
         )
     );
-
-
 
     final controlSection = Container(
       padding: EdgeInsets.all(20),
@@ -163,7 +220,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               FlatButton(
                 onPressed: () {
-                  /*...*/
+                  input_answer(7);
                 },
                 child: Text(
                   "7",
@@ -171,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FlatButton(
                 onPressed: () {
-
+                  input_answer(8);
                 },
                 child: Text(
                   "8",
@@ -179,7 +236,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FlatButton(
                 onPressed: () {
-
+                  input_answer(9);
                 },
                 child: Text(
                   "9",
@@ -192,7 +249,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               FlatButton(
                 onPressed: () {
-                  /*...*/
+                  input_answer(4);
                 },
                 child: Text(
                   "4",
@@ -200,7 +257,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FlatButton(
                 onPressed: () {
-
+                  input_answer(5);
                 },
                 child: Text(
                   "5",
@@ -208,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FlatButton(
                 onPressed: () {
-
+                  input_answer(6);
                 },
                 child: Text(
                   "6",
@@ -221,7 +278,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               FlatButton(
                 onPressed: () {
-                  /*...*/
+                  input_answer(1);
                 },
                 child: Text(
                   "1",
@@ -229,7 +286,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FlatButton(
                 onPressed: () {
-
+                  input_answer(2);
                 },
                 child: Text(
                   "2",
@@ -237,7 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FlatButton(
                 onPressed: () {
-
+                  input_answer(3);
                 },
                 child: Text(
                   "3",
@@ -250,7 +307,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               FlatButton(
                 onPressed: () {
-                  /*...*/
+                  input_answer(0);
                 },
                 child: Text(
                   "0",
@@ -258,7 +315,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FlatButton(
                 onPressed: () {
-
+                  input_answer(-1);
                 },
                 child: Text(
                   "AC",
@@ -266,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FlatButton(
                 onPressed: () {
-
+                  correctness_decision();
                 },
                 child: Text(
                   "ANS",
@@ -274,11 +331,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           )
-
         ],
       ),
     );
-
 
     return Scaffold(
       appBar: AppBar(
