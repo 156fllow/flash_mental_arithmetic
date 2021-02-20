@@ -366,20 +366,74 @@ class _MyHomePageState extends State<MyHomePage> {
 
 }
 
-class SettingsPage extends StatelessWidget{
+class SettingsPage extends StatefulWidget{
+  SettingsPage({Key key}) : super(key: key);
+
+  @override
+  _SettingsPage createState() => _SettingsPage();
+}
+
+class _SettingsPage extends State<SettingsPage>{
+
+  int _value;
+  String digitsValue_String;
+  String showTimeValue_String;
+  String showCountValue_String;
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
         title: Text("設定"),
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Go back!'),
-        ),
+      body: Column(
+        children: <Widget>[
+          Text("桁数"),
+          DropdownButton<String>(
+            value: digitsValue_String,
+            onChanged: (String newValue){
+              setState((){
+                digitsValue_String = newValue;
+              });
+            },
+            items: <String>['1','2','3','4','5','6'].map<DropdownMenuItem<String>>((String value){
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+          Text("速さ（秒/回）"),
+          DropdownButton<String>(
+            value: showTimeValue_String,
+            onChanged: (String newValue){
+              setState((){
+                showTimeValue_String = newValue;
+              });
+            },
+            items: <String>['0.10','0.15','0.20','0.25','0.30','0.35'].map<DropdownMenuItem<String>>((String value){
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+          Text("速さ（秒/回）"),
+          DropdownButton<String>(
+            value: showCountValue_String,
+            onChanged: (String newValue){
+              setState((){
+                showCountValue_String = newValue;
+              });
+            },
+            items: <String>['1','2','3','4','5'].map<DropdownMenuItem<String>>((String value){
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
