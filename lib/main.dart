@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:developer';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -62,8 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
   static bool TextEditing = true;
 
   static double showTime = 1.0;
-  static int showCount = 4;
-  static int digits = 3;
+  static int showCount = 5;
+  static int digits = 2;
 
   static int input_answer_num = 0;
 
@@ -78,6 +79,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
 
     Future<void> Exam_Start(double showTime,int showCount,int digits) async {
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      showTime = prefs.getDouble('showTimeValue') ?? 1.0;
+      showCount = prefs.getInt('showCountValue') ?? 5;
+      digits = prefs.getInt('digitsValue') ?? 2;
 
       if(TextEditing == false){
         return;
@@ -379,6 +385,42 @@ class _SettingsPage extends State<SettingsPage>{
   String digitsValue_String;
   String showTimeValue_String;
   String showCountValue_String;
+  
+  void settingsDataInitialize() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if(prefs.containsKey('digitsValue')){
+      digitsValue_String = prefs.getInt('digitsValue').toString();
+    }else{
+      digitsValue_String = '2';
+      prefs.setInt('digitsValue', 2);
+    }
+
+    if(prefs.containsKey('showTimeValue')){
+      showTimeValue_String = prefs.getDouble('showTimeValue').toString();
+    }else{
+      showTimeValue_String = '1.0';
+      prefs.setDouble('showTimeValue',1.0);
+    }
+
+    if(prefs.containsKey('showCountValue')){
+      showCountValue_String = prefs.getDouble('showCountValue').toString();
+    }else{
+      showCountValue_String = '5';
+      prefs.setInt('showCountValue', 5);
+    }
+
+  }
+
+  void saveSettingsData(String key,value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(value is double){
+      prefs.setDouble(key, value);
+    }
+    else if(value is int){
+      prefs.setInt(key, value);
+    }
+  }
 
   @override
   Widget build(BuildContext context){
@@ -394,6 +436,7 @@ class _SettingsPage extends State<SettingsPage>{
             onChanged: (String newValue){
               setState((){
                 digitsValue_String = newValue;
+                saveSettingsData('digitsValue', int.parse(digitsValue_String));
               });
             },
             items: <String>['1','2','3','4','5','6'].map<DropdownMenuItem<String>>((String value){
@@ -409,6 +452,7 @@ class _SettingsPage extends State<SettingsPage>{
             onChanged: (String newValue){
               setState((){
                 showTimeValue_String = newValue;
+                saveSettingsData('showTimeValue', double.parse(showTimeValue_String));
               });
             },
             items: <String>['0.10','0.15','0.20','0.25','0.30','0.35'].map<DropdownMenuItem<String>>((String value){
@@ -418,12 +462,13 @@ class _SettingsPage extends State<SettingsPage>{
               );
             }).toList(),
           ),
-          Text("速さ（秒/回）"),
+          Text("回数"),
           DropdownButton<String>(
             value: showCountValue_String,
             onChanged: (String newValue){
               setState((){
                 showCountValue_String = newValue;
+                saveSettingsData('showCountValue', int.parse(showCountValue_String));
               });
             },
             items: <String>['1','2','3','4','5'].map<DropdownMenuItem<String>>((String value){
