@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static TextEditingController _textSection_controller;
   static bool TextEditing = true;
 
-  static double showTime = 1.0;
+  static double showTime = 0.30;
   static int showCount = 5;
   static int digits = 2;
 
@@ -81,9 +81,25 @@ class _MyHomePageState extends State<MyHomePage> {
     Future<void> Exam_Start(double showTime,int showCount,int digits) async {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      showTime = prefs.getDouble('showTimeValue') ?? 1.0;
-      showCount = prefs.getInt('showCountValue') ?? 5;
-      digits = prefs.getInt('digitsValue') ?? 2;
+
+      double showTime;
+      int showCount;
+      int digits;
+      if(prefs.containsKey('showTimeValue')){
+        showTime = double.parse(prefs.getString('showTimeValue'));
+      }else{
+        showTime = 0.3;
+      }
+      if(prefs.containsKey('showCountValue')){
+        showCount = int.parse(prefs.getString('showCountValue'));
+      }else{
+        showCount = 5;
+      }
+      if(prefs.containsKey('digitsValue')){
+        digits = int.parse(prefs.getString('digitsValue'));
+      }else{
+        digits = 2;
+      }
 
       if(TextEditing == false){
         return;
@@ -355,6 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
             tooltip: 'Settings',
             onPressed: () {
               Navigator.push(context,MaterialPageRoute(builder: (context) => SettingsPage()));
+
             },
           ),
         ],
@@ -381,105 +398,119 @@ class SettingsPage extends StatefulWidget{
 
 class _SettingsPage extends State<SettingsPage>{
 
-  int _value;
   String digitsValue_String;
   String showTimeValue_String;
   String showCountValue_String;
-  
-  void settingsDataInitialize() async{
+
+  void initState(){
+    super.initState();
+  }
+
+  Future<List<String>>settingsDataInitialize() async{
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var list = ["2","0.30","5"];
 
     if(prefs.containsKey('digitsValue')){
-      digitsValue_String = prefs.getInt('digitsValue').toString();
-    }else{
-      digitsValue_String = '2';
-      prefs.setInt('digitsValue', 2);
+      list[0] = prefs.getString('digitsValue');
     }
 
     if(prefs.containsKey('showTimeValue')){
-      showTimeValue_String = prefs.getDouble('showTimeValue').toString();
-    }else{
-      showTimeValue_String = '1.0';
-      prefs.setDouble('showTimeValue',1.0);
+      list[1] =  prefs.getString('showTimeValue');
     }
 
     if(prefs.containsKey('showCountValue')){
-      showCountValue_String = prefs.getDouble('showCountValue').toString();
-    }else{
-      showCountValue_String = '5';
-      prefs.setInt('showCountValue', 5);
+      list[2] = prefs.getString('showCountValue');
     }
+
+    return list;
 
   }
 
-  void saveSettingsData(String key,value) async {
+  // store digits,time,count as String in SharedPreferences
+  void saveSettingsData(String key,String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if(value is double){
-      prefs.setDouble(key, value);
-    }
-    else if(value is int){
-      prefs.setInt(key, value);
-    }
+
+    prefs.setString(key, value);
+
   }
 
   @override
   Widget build(BuildContext context){
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("設定"),
-      ),
-      body: Column(
-        children: <Widget>[
-          Text("桁数"),
-          DropdownButton<String>(
-            value: digitsValue_String,
-            onChanged: (String newValue){
-              setState((){
-                digitsValue_String = newValue;
-                saveSettingsData('digitsValue', int.parse(digitsValue_String));
-              });
-            },
-            items: <String>['1','2','3','4','5','6'].map<DropdownMenuItem<String>>((String value){
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+
+    return new FutureBuilder(
+      future: settingsDataInitialize(),
+      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot){
+        print(snapshot);
+        final hasData = snapshot.hasData;
+        print("hasData:$hasData");
+        if(hasData == false){
+          return CircularProgressIndicator();
+        }
+
+
+        final isInitialized = snapshot.data;
+        print("isInitialized:$isInitialized");
+        digitsValue_String = isInitialized[0];
+        showTimeValue_String = isInitialized[1];
+        showCountValue_String = isInitialized[2];
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("設定"),
           ),
-          Text("速さ（秒/回）"),
-          DropdownButton<String>(
-            value: showTimeValue_String,
-            onChanged: (String newValue){
-              setState((){
-                showTimeValue_String = newValue;
-                saveSettingsData('showTimeValue', double.parse(showTimeValue_String));
-              });
-            },
-            items: <String>['0.10','0.15','0.20','0.25','0.30','0.35'].map<DropdownMenuItem<String>>((String value){
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+          body: Column(
+            children: <Widget>[
+              Text("桁数"),
+              DropdownButton<String>(
+                value: digitsValue_String,
+                onChanged: (String newValue){
+                  setState((){
+                    digitsValue_String = newValue;
+                    saveSettingsData('digitsValue', digitsValue_String);
+                  });
+                },
+                items: <String>['1','2','3','4','5','6'].map<DropdownMenuItem<String>>((String value){
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              Text("速さ（秒/回）"),
+              DropdownButton<String>(
+                value: showTimeValue_String,
+                onChanged: (String newValue){
+                  setState((){
+                    showTimeValue_String = newValue;
+                    saveSettingsData('showTimeValue', showTimeValue_String);
+                  });
+                },
+                items: <String>['0.10','0.15','0.20','0.25','0.30','0.35'].map<DropdownMenuItem<String>>((String value){
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              Text("回数"),
+              DropdownButton<String>(
+                value: showCountValue_String,
+                onChanged: (String newValue){
+                  setState((){
+                    showCountValue_String = newValue;
+                    saveSettingsData('showCountValue', showCountValue_String);
+                  });
+                },
+                items: <String>['1','2','3','4','5'].map<DropdownMenuItem<String>>((String value){
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
-          Text("回数"),
-          DropdownButton<String>(
-            value: showCountValue_String,
-            onChanged: (String newValue){
-              setState((){
-                showCountValue_String = newValue;
-                saveSettingsData('showCountValue', int.parse(showCountValue_String));
-              });
-            },
-            items: <String>['1','2','3','4','5'].map<DropdownMenuItem<String>>((String value){
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
+        );
+      }
     );
   }
 }
