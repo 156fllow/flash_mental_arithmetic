@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'フラッシュ暗算',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -186,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _textSection_controller.text = '〇';
         return true;
       }else{
-        _textSection_controller.text = '×';
+        _textSection_controller.text = correct_num.toString();
         return false;
       }
     }
@@ -197,9 +197,13 @@ class _MyHomePageState extends State<MyHomePage> {
           obscureText: false,
           controller: _textSection_controller,
           readOnly: true,
+          textAlign: TextAlign.center,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             labelText: '',
+          ),
+          style: TextStyle(
+            fontSize: 50
           ),
         )
     );
@@ -458,9 +462,12 @@ class _SettingsPage extends State<SettingsPage>{
             title: Text("設定"),
           ),
           body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text("桁数"),
               DropdownButton<String>(
+                isExpanded: true,
                 value: digitsValue_String,
                 onChanged: (String newValue){
                   setState((){
@@ -477,6 +484,7 @@ class _SettingsPage extends State<SettingsPage>{
               ),
               Text("速さ（秒/回）"),
               DropdownButton<String>(
+                isExpanded: true,
                 value: showTimeValue_String,
                 onChanged: (String newValue){
                   setState((){
@@ -493,6 +501,7 @@ class _SettingsPage extends State<SettingsPage>{
               ),
               Text("回数"),
               DropdownButton<String>(
+                isExpanded: true,
                 value: showCountValue_String,
                 onChanged: (String newValue){
                   setState((){
