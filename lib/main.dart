@@ -52,10 +52,48 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _TopPage createState() => _TopPage();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _TopPage extends State<MyHomePage>{
+  void initState(){
+    super.initState();
+  }
+  Widget build(BuildContext context){
+    return Scaffold(
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(fontSize: 20),
+          ),
+          onPressed: null,
+          child: const Text('Test Mode'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(fontSize: 20),
+          ),
+          onPressed: (){
+            Navigator.push(context,MaterialPageRoute(builder: (context) => FreeModePageState(title:widget.title)));
+          },
+          child: const Text('Free Mode'),
+        )
+      ]),
+    );
+  }
+}
+
+class FreeModePageState extends StatefulWidget{
+  FreeModePageState({Key key,this.title}) : super(key: key);
+
+  final String title;
+  _FreeModePageState createState() => _FreeModePageState();
+
+}
+
+class _FreeModePageState extends State<FreeModePageState> {
 
   static String display = 'Press Start';
 
