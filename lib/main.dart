@@ -68,7 +68,9 @@ class _TopPage extends State<MyHomePage>{
           style: TextButton.styleFrom(
             textStyle: const TextStyle(fontSize: 20),
           ),
-          onPressed: null,
+          onPressed: (){
+            Navigator.push(context,MaterialPageRoute(builder: (context) => SelectDiffMenu()));
+          },
           child: const Text('Test Mode'),
         ),
         TextButton(
@@ -81,6 +83,44 @@ class _TopPage extends State<MyHomePage>{
           child: const Text('Free Mode'),
         )
       ]),
+    );
+  }
+}
+
+class SelectDiffMenu extends StatefulWidget{
+  SelectDiffMenu({Key key}) : super(key: key);
+
+  _SelectDiffMenu createState() => _SelectDiffMenu();
+}
+
+class _SelectDiffMenu extends State<SelectDiffMenu>{
+  var data = [
+    Text("item0"),
+    Text("item1"),
+    Text("item2"),
+    Text("item3"),
+    Text("item4"),
+    Text("item5"),
+
+  ];
+  Widget build(BuildContext context){
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('選択メニュー'),
+      ),
+      body: ListView.separated(
+          itemBuilder: (BuildContext context,int index) {
+            return GestureDetector(
+              child: data[index],
+              onTap: () {
+                print(index);
+              },
+            );
+          },
+        separatorBuilder: (BuildContext context, int index) => Divider(color: Colors.black,),
+        itemCount: data.length,
+      ),
     );
   }
 }
