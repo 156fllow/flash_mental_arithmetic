@@ -94,31 +94,104 @@ class SelectDiffMenu extends StatefulWidget{
 }
 
 class _SelectDiffMenu extends State<SelectDiffMenu>{
-  var data = [
-    Text("item0"),
-    Text("item1"),
-    Text("item2"),
-    Text("item3"),
-    Text("item4"),
-    Text("item5"),
 
+  var TextObjdata = [
+
+    Text("10級\t2桁\t2口\t4秒"),
+    Text("9級\t2桁\t3口\t6秒"),
+    Text("8級\t2桁\t4口\t7秒"),
+    Text("7級\t2桁\t5口\t8秒"),
+    Text("6級\t2桁\t6口\t9秒"),
+    Text("5級\t2桁\t7口\t10秒"),
+    Text("4級\t2桁\t8口\t11秒"),
+    Text("3級\t2桁\t10口\t12秒"),
+    Text("2級\t2桁\t12口\t12秒"),
+    Text("1級\t2桁\t15口\t13秒"),
+    Text("初段\t2桁\t15口\t10秒"),
+    Text("二段\t3桁\t4口\t4秒"),
+    Text("三段\t3桁\t6口\t5秒"),
+    Text("四段\t3桁\t8口\t6秒"),
+    Text("五段\t3桁\t10口\t7秒"),
+    Text("六段\t3桁\t12口\t8秒"),
+    Text("七段\t3桁\t15口\t8秒"),
+    Text("八段\t3桁\t15口\t6秒"),
+    Text("九段\t3桁\t15口\t4.5秒"),
+    Text("十段\t3桁\t15口\t3秒"),
+    Text("十一段\t3桁\t15口\t2.8秒"),
+    Text("十二段\t3桁\t15口\t2.6秒"),
+    Text("十三段\t3桁\t15口\t2.4秒"),
+    Text("十四段\t3桁\t15口\t2.2秒"),
+    Text("十五段\t3桁\t15口\t2.0秒"),
+    Text("十六段\t3桁\t15口\t1.9秒"),
+    Text("十七段\t3桁\t15口\t1.8秒"),
+    Text("十八段\t3桁\t15口\t1.7秒"),
+    Text("十九段\t3桁\t15口\t1.6秒"),
+    Text("二十段\t3桁\t15口\t1.5秒"),
   ];
+
+  var data = [
+    [-10,2,2,4],
+    [-9,2,3,6],
+    [-8,2,4,7],
+    [-7,2,5,8],
+    [-6,2,6,9],
+    [-5,2,7,10],
+    [-4,2,8,11],
+    [-3,2,10,12],
+    [-2,2,12,12],
+    [-1,2,15,13],
+    [1,2,15,10],
+    [2,3,4,4],
+    [3,3,6,5],
+    [4,3,8,6],
+    [5,3,10,7],
+    [6,3,12,8],
+    [7,3,15,8],
+    [8,3,15,6],
+    [9,3,15,4.5],
+    [10,3,15,3],
+    [11,3,15,2.8],
+    [12,3,15,2.6],
+    [13,3,15,2.4],
+    [14,3,15,2.2],
+    [15,3,15,2.0],
+    [16,3,15,1.9],
+    [17,3,15,1.8],
+    [18,3,15,1.7],
+    [19,3,15,1.6],
+    [20,3,15,1.5]
+  ];
+
+
   Widget build(BuildContext context){
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('選択メニュー'),
       ),
-      body: ListView.separated(
-          itemBuilder: (BuildContext context,int index) {
-            return GestureDetector(
-              child: data[index],
-              onTap: () {
-                print(index);
-              },
-            );
-          },
-        separatorBuilder: (BuildContext context, int index) => Divider(color: Colors.black,),
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 4,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 20,
+
+        ),
+        itemBuilder: (BuildContext context,int index) {
+          return GestureDetector(
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: new BorderRadius.all(const Radius.circular(10))
+              ),
+              child:TextObjdata[index]
+            ),
+            onTap: () {
+              print(data[index]);
+            },
+          );
+        },
         itemCount: data.length,
       ),
     );
